@@ -10,7 +10,6 @@ def operations(*sets):
             result[f"{set1} & {set2}"] = set1 & set2
             result[f"{set1} - {set2}"] = set1 - set2
             result[f"{set2} - {set1}"] = set2 - set1
-
     return result
 
 set1 = {1, 2}
