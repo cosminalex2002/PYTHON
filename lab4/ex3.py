@@ -27,7 +27,7 @@ class Matrix:
         transposed = Matrix(self.columns, self.rows)
         for i in range(self.rows):
             for j in range(self.columns):
-                transposed.set(j, i, self.get(i, j))
+                transposed.set(i, j, self.get(j, i))
         return transposed
 
     def mul(self, matrix2):
