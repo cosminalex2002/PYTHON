@@ -15,8 +15,10 @@ def main():
         sys.exit(1)
 
     for i, file in enumerate(os.listdir(directory)):
+        try :
             os.rename(os.path.join(directory, file), os.path.join(directory, str(i) + file))
-
+        except IOError:
+            print("error")
 
 
 if __name__ == '__main__':
