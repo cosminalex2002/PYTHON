@@ -64,9 +64,7 @@ class TicTacToe:
             if self.board[move] == " ":
                 self.board[move] = self.currentPlayer
                 break
-            else:
-                print("Invalid move!")
-            break
+
 
 
 
