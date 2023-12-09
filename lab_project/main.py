@@ -1,3 +1,6 @@
+import random
+
+
 class TicTacToe:
     def __init__(self):
         self.board = [" " for _ in range(9)]
@@ -6,6 +9,7 @@ class TicTacToe:
         self.currentPlayer = self.playerA
         self.winner = None
         self.gameOver = False
+        self.difficulty = None
         self.score = {"playerA": 0, "playerAI": 0, "tie": 0}
 
     def printBoard(self):
@@ -32,10 +36,20 @@ class TicTacToe:
         else:
             print("Player " + self.currentPlayer + " turn")
     def startGame(self):
+        self.askDifficulty()
+
         while not self.gameOver:
             self.printBoard()
             self.printStatus()
-            self.move()
+            if self.currentPlayer == self.playerAI:
+                if self.difficulty == "1":
+                    self.moveAiRandom()
+                # elif self.difficulty == "2":
+                #     self.moveAiMedium()
+                # elif self.difficulty == "3":
+                #     self.moveAiBestMove()
+            else:
+                self.move()
             self.checkGameOver()
             self.changePlayer()
         self.printBoard()
@@ -43,6 +57,34 @@ class TicTacToe:
         self.updateScore()
         self.printScore()
         self.playAgain()
+
+    def moveAiRandom(self):
+        while True:
+            move = random.randint(0,8)
+            if self.board[move] == " ":
+                self.board[move] = self.currentPlayer
+                break
+            else:
+                print("Invalid move!")
+            break
+
+
+
+    def askDifficulty(self):
+        while True:
+            self.difficulty = input("Choose the difficulty : \n 1. AI move random \n 2. AI move one move random, one the best move \n 3. AI the best move always \n")
+            if self.difficulty == "1":
+                break
+            # elif self.difficulty == "2":
+            #     break
+            # elif self.difficulty == "3":
+            #     break
+            else:
+                print("Invalid input!")
+
+
+
+
 
     def move(self):
         while True:
@@ -104,9 +146,6 @@ class TicTacToe:
             self.score["playerAI"] += 1
         else:
             self.score["tie"] += 1
-
-    
-
 
 
 
