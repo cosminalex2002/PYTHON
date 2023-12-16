@@ -11,29 +11,7 @@ class TicTacToe:
         self.difficulty = None
         self.score = {"playerA": 0, "playerAI": 0, "tie": 0}
 
-    def printBoard(self):
-        for i in range(3):
-            row = self.board[i * 3:(i + 1) * 3]
-            print("| " + " | ".join(row) + " |")
 
-    def printScore(self):
-        print("Player A: " + str(self.score["playerA"]))
-        print("Player AI: " + str(self.score["playerAI"]))
-        print("Tie: " + str(self.score["tie"]))
-
-    def printResult(self):
-        if self.winner == self.playerA:
-            print("Player A won!")
-        elif self.winner == self.playerAI:
-            print("Player AI won!")
-        else:
-            print("Tie!")
-
-    def printStatus(self):
-        if self.gameOver:
-            self.printResult()
-        else:
-            print("Player " + self.currentPlayer + " turn")
 
     def changePlayer(self):
         if self.currentPlayer == self.playerA:
@@ -51,15 +29,16 @@ class TicTacToe:
                 break
 
     def moveAiBestMove(self):
-        maxDepth = 9
+        maxDepth = 9 - self.board.count(" ")
         bestScore = float('-inf')
         bestMove = None
 
         for i in range(9):
             if self.board[i] == " ":
-                self.board[i] = self.playerAI
-                score = self.minimax(self.board, 0, False, maxDepth)
-                self.board[i] = " "
+                board_copy = self.board[:]
+                board_copy[i] = self.playerAI
+
+                score = self.minimax(board_copy, 0, False, maxDepth)
 
                 if score > bestScore:
                     bestScore = score
@@ -68,13 +47,17 @@ class TicTacToe:
         self.board[bestMove] = self.playerAI
 
     def minimax(self, board, depth, maximizingPlayer, maxDepth):
-        if depth >= maxDepth or self.checkGameOver():
+        if depth >= maxDepth or self.checkGameOver(board):
+            self.gameOver = False
             if self.hasWon(board, self.playerAI):
                 return 1 * (10 - depth)
             elif self.hasWon(board, self.playerA):
                 return -1 * (10 - depth)
             else:
                 return 0
+
+
+
 
         if maximizingPlayer:
             bestScore = float('-inf')
@@ -104,19 +87,22 @@ class TicTacToe:
                 return True
         return False
 
-    def checkGameOver2(self, board):
-        if " " in board:
-            return False
-        else:
-            if self.hasWon(board, self.playerAI):
-                self.winner = self.playerAI
-            elif self.hasWon(board, self.playerA):
-                self.winner = self.playerA
-            else:
-                self.winner = "tie"
+    def checkGameOver(self, board):
+
+        if self.hasWon(board, self.playerA):
+            self.winner = self.playerA
+            self.gameOver = True
             return True
-
-
+        elif self.hasWon(board, self.playerAI):
+            self.winner = self.playerAI
+            self.gameOver = True
+            return True
+        elif board.count(" ") == 0:
+            self.winner = None
+            self.gameOver = True
+            return True
+        else:
+            return False
 
     def askDifficulty(self):
         while True:
@@ -130,10 +116,6 @@ class TicTacToe:
             else:
                 print("Invalid input!")
 
-
-
-
-
     def move(self):
         while True:
             try:
@@ -145,19 +127,6 @@ class TicTacToe:
                     print("Invalid move!")
             except:
                 print("Invalid move!")
-
-
-    def checkGameOver(self):
-        self.checkWin()
-        self.checkTie()
-
-    def checkWin(self):
-        if " " in self.board:
-            self.gameOver = False
-        else:
-            self.gameOver = True
-
-
         winCombination = ((0, 1, 2), (3, 4, 5), (6, 7, 8),
                           (0, 3, 6), (1, 4, 7), (2, 5, 8),
                           (0, 4, 8), (2, 4, 6))
@@ -167,13 +136,29 @@ class TicTacToe:
                 self.gameOver = True
                 break
 
+    def startGame(self):
+        self.askDifficulty()
 
+        while not self.gameOver:
+            self.printBoard()
+            self.printStatus()
 
-
-    def checkTie(self):
-        if " " not in self.board:
-            self.winner = "tie"
-            self.gameOver = True
+            if self.currentPlayer == self.playerAI:
+                if self.difficulty == "1":
+                    self.moveAiRandom()
+                # elif self.difficulty == "2":
+                #     self.moveAiMedium()
+                elif self.difficulty == "3":
+                    self.moveAiBestMove()
+            else:
+                self.move()
+            self.checkGameOver(self.board)
+            self.changePlayer()
+        self.printBoard()
+        self.printResult()
+        self.updateScore()
+        self.printScore()
+        self.playAgain()
 
     def playAgain(self):
         while True:
@@ -200,35 +185,32 @@ class TicTacToe:
         else:
             self.score["tie"] += 1
 
-    def startGame(self):
-        self.askDifficulty()
-
-        while not self.gameOver:
-            self.printBoard()
-            self.printStatus()
-
-            if self.currentPlayer == self.playerAI:
-                if self.difficulty == "1":
-                    self.moveAiRandom()
-                # elif self.difficulty == "2":
-                #     self.moveAiMedium()
-                elif self.difficulty == "3":
-                    self.moveAiBestMove()
-            else:
-                self.move()
-            self.checkGameOver()
-            self.changePlayer()
-        self.printBoard()
-        self.printResult()
-        self.updateScore()
-        self.printScore()
-        self.playAgain()
 
 
 
+    def printBoard(self):
+        for i in range(3):
+            row = self.board[i * 3:(i + 1) * 3]
+            print("| " + " | ".join(row) + " |")
 
+    def printScore(self):
+        print("Player A: " + str(self.score["playerA"]))
+        print("Player AI: " + str(self.score["playerAI"]))
+        print("Tie: " + str(self.score["tie"]))
 
+    def printResult(self):
+        if self.winner == self.playerA:
+            print("Player A won!")
+        elif self.winner == self.playerAI:
+            print("Player AI won!")
+        else:
+            print("Tie!")
 
+    def printStatus(self):
+        if self.gameOver:
+            self.printResult()
+        else:
+            print("Player " + self.currentPlayer + " turn")
 
 if __name__ == "__main__":
     game = TicTacToe()
