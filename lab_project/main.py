@@ -9,7 +9,9 @@ class TicTacToe:
         self.winner = None
         self.gameOver = False
         self.difficulty = None
+        self.alternate = 0
         self.score = {"playerA": 0, "playerAI": 0, "tie": 0}
+
 
 
 
@@ -29,26 +31,33 @@ class TicTacToe:
                 break
 
     def moveAiBestMove(self):
-        maxDepth = 9 - self.board.count(" ")
+        maxDepth = 9 - self.board.count("X") - self.board.count("O")
         bestScore = float('-inf')
         bestMove = None
 
+        #iterate through each position on the board
         for i in range(9):
             if self.board[i] == " ":
                 board_copy = self.board[:]
+                #simulate AI move on the copied board
                 board_copy[i] = self.playerAI
 
+                #calculate the score for the AI's move using minimax algorithm
                 score = self.minimax(board_copy, 0, False, maxDepth)
 
+                #update the best move if a higher score is found
                 if score > bestScore:
                     bestScore = score
                     bestMove = i
 
+        #place the AI symbol in the best possible position on the actual board
         self.board[bestMove] = self.playerAI
 
     def minimax(self, board, depth, maximizingPlayer, maxDepth):
+        #check if the game has ended or the maximum depth has been reached
         if depth >= maxDepth or self.checkGameOver(board):
             self.gameOver = False
+            # Evaluate the score for the current state of the board
             if self.hasWon(board, self.playerAI):
                 return 1 * (10 - depth)
             elif self.hasWon(board, self.playerA):
@@ -56,25 +65,34 @@ class TicTacToe:
             else:
                 return 0
 
-
-
-
+        #if its the turn of the maximizing player (AI)
         if maximizingPlayer:
             bestScore = float('-inf')
+            #iterate through each position on the board
             for i in range(9):
                 if board[i] == " ":
+                    #make a move for the AI
                     board[i] = self.playerAI
+                    #recursively calculate the score for the next move
                     score = self.minimax(board, depth + 1, False, maxDepth)
+                    #undo the move
                     board[i] = " "
+                    #update the best possible score for the AI
                     bestScore = max(score, bestScore)
             return bestScore
         else:
+            #if itd the turn of the minimizing player (human)
             bestScore = float('inf')
+            #iterate through each position on the board
             for i in range(9):
                 if board[i] == " ":
+                    #make a move for the human player
                     board[i] = self.playerA
+                    #recursively calculate the score for the next move
                     score = self.minimax(board, depth + 1, True, maxDepth)
+                    #undo the move
                     board[i] = " "
+                    #update the best possible score for the human player
                     bestScore = min(score, bestScore)
             return bestScore
 
@@ -88,7 +106,6 @@ class TicTacToe:
         return False
 
     def checkGameOver(self, board):
-
         if self.hasWon(board, self.playerA):
             self.winner = self.playerA
             self.gameOver = True
@@ -109,8 +126,8 @@ class TicTacToe:
             self.difficulty = input("Choose the difficulty : \n 1. AI move random \n 2. AI move one move random, one the best move \n 3. AI the best move always \n")
             if self.difficulty == "1":
                 break
-            # elif self.difficulty == "2":
-            #     break
+            elif self.difficulty == "2":
+                break
             elif self.difficulty == "3":
                 break
             else:
@@ -136,6 +153,15 @@ class TicTacToe:
                 self.gameOver = True
                 break
 
+    def moveAiMedium(self):
+        if self.alternate == 0:
+            self.moveAiRandom()
+            self.alternate = 1
+        else:
+            self.moveAiBestMove()
+            self.alternate = 0
+
+
     def startGame(self):
         self.askDifficulty()
 
@@ -146,8 +172,8 @@ class TicTacToe:
             if self.currentPlayer == self.playerAI:
                 if self.difficulty == "1":
                     self.moveAiRandom()
-                # elif self.difficulty == "2":
-                #     self.moveAiMedium()
+                elif self.difficulty == "2":
+                    self.moveAiMedium()
                 elif self.difficulty == "3":
                     self.moveAiBestMove()
             else:
@@ -169,6 +195,7 @@ class TicTacToe:
                 self.currentPlayer = self.playerA
                 self.winner = None
                 self.difficulty = None
+                self.alternate = 0
                 break
             elif playAgain == "n":
                 break
@@ -189,6 +216,7 @@ class TicTacToe:
 
 
     def printBoard(self):
+
         for i in range(3):
             row = self.board[i * 3:(i + 1) * 3]
             print("| " + " | ".join(row) + " |")
