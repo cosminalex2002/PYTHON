@@ -166,90 +166,6 @@ class TicTacToe:
             self.alternate = 0
 
 
-    def startGame(self):
-        self.askDifficulty()
-
-        while not self.gameOver:
-            self.printBoard()
-            self.printStatus()
-
-            if self.currentPlayer == self.playerAI:
-                if self.difficulty == "1":
-                    self.moveAiRandom()
-                elif self.difficulty == "2":
-                    self.moveAiMedium()
-                elif self.difficulty == "3":
-                    self.moveAiBestMove()
-            else:
-                self.move()
-            self.checkGameOver(self.board)
-            self.changePlayer()
-        self.printBoard()
-        self.printResult()
-        self.updateScore()
-        self.printScore()
-        self.playAgain()
-
-    def playAgain(self):
-        play_again = input("Do you want to play again? (yes/no): ").lower()
-        if play_again == "yes":
-            self.board = [" " for _ in range(9)]
-            self.gameOver = False
-            self.currentPlayer = self.playerA
-            self.winner = None
-            self.difficulty = None
-            self.alternate = 0
-            self.startGame()
-        else:
-            print("Thank you for playing!")
-
-
-    def updateScore(self):
-        if self.winner == self.playerA:
-            self.score["playerA"] += 1
-        elif self.winner == self.playerAI:
-            self.score["playerAI"] += 1
-        else:
-            self.score["tie"] += 1
-
-
-
-
-    def printBoard(self):
-        for i in range(3):
-            print("|", end="")
-            for j in range(3):
-                print(self.board[i * 3 + j] + "|", end="")
-            print()
-
-    def printScore(self):
-        print("Player A: " + str(self.score["playerA"]))
-        print("Player AI: " + str(self.score["playerAI"]))
-        print("Tie: " + str(self.score["tie"]))
-
-    def printResult(self):
-        if self.winner == self.playerA:
-            print("Player A won!")
-        elif self.winner == self.playerAI:
-            print("Player AI won!")
-        else:
-            print("Tie!")
-
-    def printStatus(self):
-        if self.gameOver:
-            self.printResult()
-        else:
-            print("Player " + self.currentPlayer + " turn")
-
-
-
-
-
-
-
-
-
-
 
 class TicTacToeGUI(TicTacToe):
     def __init__(self):
@@ -260,88 +176,94 @@ class TicTacToeGUI(TicTacToe):
 
         self.buttons = []
         for i in range(3):
-            row_buttons = []
+            rowButtons = []
             for j in range(3):
                 btn = tk.Button(self.root, text=" ", font=("Arial", 20), width=5, height=2,
-                                command=lambda position=i * 3 + j: self.make_move(position))
+                                command=lambda position=i * 3 + j: self.makeMove(position))
                 btn.grid(row=i, column=j)
-                row_buttons.append(btn)
-            self.buttons.append(row_buttons)
+                rowButtons.append(btn)
+            self.buttons.append(rowButtons)
 
-        self.difficulty_chosen = False
+        self.difficultyChosen = False
 
         label = tk.Label(self.root, text="Choose difficulty:")
         label.grid(row=3, columnspan=3)
 
-        easy_button = tk.Button(self.root, text="Easy", command=self.set_easy)
-        easy_button.grid(row=4, column=0)
+        easyButton = tk.Button(self.root, text="Easy", command=self.setEasy)
+        easyButton.grid(row=4, column=0)
 
-        medium_button = tk.Button(self.root, text="Medium", command=self.set_medium)
-        medium_button.grid(row=4, column=1)
+        mediumButton = tk.Button(self.root, text="Medium", command=self.setMedium)
+        mediumButton.grid(row=4, column=1)
 
-        hard_button = tk.Button(self.root, text="Hard", command=self.set_hard)
-        hard_button.grid(row=4, column=2)
+        heardButton = tk.Button(self.root, text="Hard", command=self.setHard)
+        heardButton.grid(row=4, column=2)
 
-        self.score_label = tk.Label(self.root, text="")
-        self.score_label.grid(row=5, columnspan=3)
+        self.scoreLabel = tk.Label(self.root, text="")
+        self.scoreLabel.grid(row=5, columnspan=3)
 
-        self.result_label = tk.Label(self.root, text="")
-        self.result_label.grid(row=6, columnspan=3)
-
-
+        self.resultLabel = tk.Label(self.root, text="")
+        self.resultLabel.grid(row=6, columnspan=3)
 
 
 
 
-    def show_play_again_dialog(self):
-        play_again = tk.messagebox.askyesno("Play Again", "Do you want to play again?")
-        return play_again
+
+
+    def showPlayAgainDialog(self):
+        playAgain = tk.messagebox.askyesno("Play Again", "Do you want to play again?")
+        return playAgain
 
     def start_game(self):
-        self.update_GUI()
+        self.updateGUI()
         if self.gameOver:
-            self.show_play_again_dialog()
+            self.showPlayAgainDialog()
         else:
             self.root.mainloop()
 
 
 
+    def updateScore(self):
+        if self.winner == self.playerA:
+            self.score["playerA"] += 1
+        elif self.winner == self.playerAI:
+            self.score["playerAI"] += 1
+        else:
+            self.score["tie"] += 1
+
+        self.scoreLabel.config(
+            text=f"Player A: {self.score['playerA']}   Player AI: {self.score['playerAI']}   Tie: {self.score['tie']}")
 
 
 
-
-
-
-
-
-
-    def set_easy(self):
+    def setEasy(self):
         self.difficulty = "1"
-        self.difficulty_chosen = True
-        self.update_difficulty_buttons()
+        self.difficultyChosen = True
+        self.updateDifficultyButtons()
         self.enable_game_buttons()
-        self.start_game_if_ready()
+        self.startGameIfReady()
 
-    def set_medium(self):
+    def setMedium(self):
         self.difficulty = "2"
-        self.difficulty_chosen = True
-        self.update_difficulty_buttons()
+        self.difficultyChosen = True
+        self.updateDifficultyButtons()
         self.enable_game_buttons()
-        self.start_game_if_ready()
+        self.startGameIfReady()
 
-    def set_hard(self):
+    def setHard(self):
         self.difficulty = "3"
-        self.difficulty_chosen = True
-        self.update_difficulty_buttons()
+        self.difficultyChosen = True
+        self.updateDifficultyButtons()
         self.enable_game_buttons()
-        self.start_game_if_ready()
+        self.startGameIfReady()
 
+    def startGameIfReady(self):
+        if self.difficultyChosen:
+            self.startGame()
 
-    def start_game_if_ready(self):
-        if self.difficulty_chosen:
-            self.start_game()
+    def startGame(self):
+        self.root.mainloop()
 
-    def update_difficulty_buttons(self):
+    def updateDifficultyButtons(self):
         for widget in self.root.winfo_children():
             if widget.winfo_class() == "Button" and widget.cget("text") != "Choose difficulty:":
                 widget.config(state="disabled")
@@ -352,18 +274,22 @@ class TicTacToeGUI(TicTacToe):
                 self.buttons[i][j].config(state="normal")
 
 
-    def make_move(self, position):
-        if not self.gameOver and self.difficulty_chosen:
+    def makeMove(self, position):
+        if not self.gameOver and self.difficultyChosen:
             if self.currentPlayer == self.playerA:
                 if self.board[position] == " ":
                     self.board[position] = self.currentPlayer
                     self.buttons[position // 3][position % 3].config(text=self.currentPlayer)
-                    self.update_GUI()
-                    self.update_game()
+                    self.updateGUI()
+                    self.updateGame()
 
-    def update_game(self):
-        if not self.gameOver:
+    def updateGame(self):
+
+        if self.checkGameOver(self.board):
+            self.updateGUI()
+        else:
             self.changePlayer()
+            self.updateGUI()
             if self.currentPlayer == self.playerAI:
                 if self.difficulty == "1":
                     self.moveAiRandom()
@@ -371,45 +297,39 @@ class TicTacToeGUI(TicTacToe):
                     self.moveAiMedium()
                 elif self.difficulty == "3":
                     self.moveAiBestMove()
-
-                self.update_GUI()
                 self.checkGameOver(self.board)
-                if self.gameOver:
-                    self.printResult()
-                    self.updateScore()
-                    self.printScore()
-                    self.update_GUI()
-                else:
-                    self.changePlayer()
+                self.changePlayer()
+                self.updateGUI()
 
+            else:
+                return
 
-    def start_game(self):
-        self.update_GUI()
-        self.root.mainloop()
-
-    def update_GUI(self):
+    def updateGUI(self):
         for i in range(3):
             for j in range(3):
                 position = i * 3 + j
                 self.buttons[i][j].config(text=self.board[position],
-                                          command=lambda pos=position: self.make_move(pos))
+                                          command=lambda pos=position: self.makeMove(pos))
 
-        self.score_label.config(
+        self.scoreLabel.config(
             text=f"Player A: {self.score['playerA']}   Player AI: {self.score['playerAI']}   Tie: {self.score['tie']}")
 
         if self.gameOver:
-            result_text = ""
+            resultText = ""
             if self.winner == self.playerA:
-                result_text = "Player A won!"
+                resultText = "Player A won!"
+
             elif self.winner == self.playerAI:
-                result_text = "Player AI won!"
+                resultText = "Player AI won!"
+
             else:
-                result_text = "Tie!"
+                resultText = "Tie!"
+            self.updateScore()
 
-            self.result_label.config(text=result_text)
+            self.resultLabel.config(text=resultText)
 
-            play_again = self.show_play_again_dialog()
-            if play_again:
+            playAgain = self.showPlayAgainDialog()
+            if playAgain:
                 self.board = [" " for _ in range(9)]
                 self.gameOver = False
                 self.currentPlayer = self.playerA
@@ -417,50 +337,20 @@ class TicTacToeGUI(TicTacToe):
                 self.difficulty = None
                 self.alternate = 0
 
-                self.difficulty_chosen = False
-                self.update_difficulty_buttons()
+                self.difficultyChosen = False
+                self.updateDifficultyButtons()
                 for i in range(3):
                     for j in range(3):
                         self.buttons[i][j].config(text=" ", state="normal")
 
-                self.enable_difficulty_buttons()
+                self.enableDifficultyButtons()
 
-                self.result_label.config(text="")
-                self.start_game_if_ready()  
+                self.resultLabel.config(text="")
+                self.startGameIfReady()
             else:
                 self.root.destroy()
 
-
-
-
-    def playAgain(self):
-
-        play_again = tk.messagebox.askyesno("Play Again", "Do you want to play again?")
-        if play_again:
-            self.board = [" " for _ in range(9)]
-            self.gameOver = False
-            self.currentPlayer = self.playerA
-            self.winner = None
-            self.difficulty = None
-            self.alternate = 0
-
-            # Reset GUI elements
-            self.difficulty_chosen = False
-            self.update_difficulty_buttons()
-            for i in range(3):
-                for j in range(3):
-                    self.buttons[i][j].config(text=" ", state="normal")
-
-            self.enable_difficulty_buttons()
-
-            self.result_label.config(text="")
-            self.start_game_if_ready()
-        else:
-            self.root.destroy()
-
-
-
-    def enable_difficulty_buttons(self):
+    def enableDifficultyButtons(self):
         for widget in self.root.winfo_children():
             if widget.winfo_class() == "Button" and widget.cget("text") != "Choose difficulty:":
                 widget.config(state="normal")
@@ -468,4 +358,4 @@ class TicTacToeGUI(TicTacToe):
 
 if __name__ == "__main__":
     game = TicTacToeGUI()
-    game.start_game()
+    game.startGame()
