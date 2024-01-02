@@ -289,6 +289,10 @@ class TicTacToeGUI(TicTacToe):
         self.result_label.grid(row=6, columnspan=3)
 
 
+
+
+
+
     def show_play_again_dialog(self):
         play_again = tk.messagebox.askyesno("Play Again", "Do you want to play again?")
         return play_again
@@ -374,7 +378,7 @@ class TicTacToeGUI(TicTacToe):
                     self.printResult()
                     self.updateScore()
                     self.printScore()
-                    self.playAgain()
+                    self.update_GUI()
                 else:
                     self.changePlayer()
 
@@ -394,20 +398,18 @@ class TicTacToeGUI(TicTacToe):
             text=f"Player A: {self.score['playerA']}   Player AI: {self.score['playerAI']}   Tie: {self.score['tie']}")
 
         if self.gameOver:
+            result_text = ""
             if self.winner == self.playerA:
                 result_text = "Player A won!"
             elif self.winner == self.playerAI:
                 result_text = "Player AI won!"
             else:
                 result_text = "Tie!"
-            self.result_label.config(text=result_text)
 
-            self.updateScore()
-            self.printScore()
+            self.result_label.config(text=result_text)
 
             play_again = self.show_play_again_dialog()
             if play_again:
-                # Reset the board and other game variables
                 self.board = [" " for _ in range(9)]
                 self.gameOver = False
                 self.currentPlayer = self.playerA
@@ -423,11 +425,16 @@ class TicTacToeGUI(TicTacToe):
 
                 self.enable_difficulty_buttons()
 
-                self.start_game_if_ready() # prompt for difficulty selection
+                self.result_label.config(text="")
+                self.start_game_if_ready()  
             else:
                 self.root.destroy()
 
+
+
+
     def playAgain(self):
+
         play_again = tk.messagebox.askyesno("Play Again", "Do you want to play again?")
         if play_again:
             self.board = [" " for _ in range(9)]
@@ -446,9 +453,11 @@ class TicTacToeGUI(TicTacToe):
 
             self.enable_difficulty_buttons()
 
-            self.start_game_if_ready()  # Prompt for difficulty selection
+            self.result_label.config(text="")
+            self.start_game_if_ready()
         else:
             self.root.destroy()
+
 
 
     def enable_difficulty_buttons(self):
