@@ -213,7 +213,7 @@ class TicTacToeGUI(TicTacToe):
         playAgain = tk.messagebox.askyesno("Play Again", "Do you want to play again?")
         return playAgain
 
-    def start_game(self):
+    def startGame(self):
         self.updateGUI()
         if self.gameOver:
             self.showPlayAgainDialog()
@@ -239,40 +239,36 @@ class TicTacToeGUI(TicTacToe):
         self.difficulty = "1"
         self.difficultyChosen = True
         self.updateDifficultyButtons()
-        self.enable_game_buttons()
+        self.enableGameButtons()
         self.startGameIfReady()
 
     def setMedium(self):
         self.difficulty = "2"
         self.difficultyChosen = True
         self.updateDifficultyButtons()
-        self.enable_game_buttons()
+        self.enableGameButtons()
         self.startGameIfReady()
 
     def setHard(self):
         self.difficulty = "3"
         self.difficultyChosen = True
         self.updateDifficultyButtons()
-        self.enable_game_buttons()
+        self.enableGameButtons()
         self.startGameIfReady()
 
     def startGameIfReady(self):
         if self.difficultyChosen:
             self.startGame()
 
-    def startGame(self):
-        self.root.mainloop()
-
     def updateDifficultyButtons(self):
         for widget in self.root.winfo_children():
             if widget.winfo_class() == "Button" and widget.cget("text") != "Choose difficulty:":
                 widget.config(state="disabled")
 
-    def enable_game_buttons(self):
+    def enableGameButtons(self):
         for i in range(3):
             for j in range(3):
                 self.buttons[i][j].config(state="normal")
-
 
     def makeMove(self, position):
         if not self.gameOver and self.difficultyChosen:
@@ -284,7 +280,6 @@ class TicTacToeGUI(TicTacToe):
                     self.updateGame()
 
     def updateGame(self):
-
         if self.checkGameOver(self.board):
             self.updateGUI()
         else:
@@ -300,7 +295,6 @@ class TicTacToeGUI(TicTacToe):
                 self.checkGameOver(self.board)
                 self.changePlayer()
                 self.updateGUI()
-
             else:
                 return
 
@@ -310,10 +304,8 @@ class TicTacToeGUI(TicTacToe):
                 position = i * 3 + j
                 self.buttons[i][j].config(text=self.board[position],
                                           command=lambda pos=position: self.makeMove(pos))
-
         self.scoreLabel.config(
             text=f"Player A: {self.score['playerA']}   Player AI: {self.score['playerAI']}   Tie: {self.score['tie']}")
-
         if self.gameOver:
             resultText = ""
             if self.winner == self.playerA:
